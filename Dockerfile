@@ -24,9 +24,10 @@ WORKDIR /usr/share/nginx/html
 COPY --from=builder /app/build ./
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Give ownership to appuser
-RUN chown -R 1001:3001 /usr/share/nginx/html && \
-    chown -R 1001:3001 /var/cache/nginx /var/run
+# Fix permissions so appuser can write to /var/run (where nginx.pid lives)
+RUN mkdir -p /var/run && chown -R 1001:3001 /var/run && \
+    chown -R 1001:3001 /usr/share/nginx/html && \
+    chown -R 1001:3001 /var/cache/nginx
 
 USER appuser
 
